@@ -1,0 +1,138 @@
+<html>
+    <script src="bower_components/flocking/dist/flocking-all.js"></script>
+    <script> 
+
+        var mySynth = flock.synth({
+            synthDef: {
+                id: "jjj",
+                ugen: "flock.ugen.sin",
+                freq: 500,
+                mul: {
+                    ugen: "flock.ugen.asr",
+                    start: 0.0,
+                    attack: 0.1,
+                    sutain: 0.1,
+                    release: 1.0
+                }
+            }
+        });
+
+        var myNoise = flock.synth({
+            synthDef: {
+                id: "nnn",
+                ugen: "flock.ugen.whiteNoise",
+                mul: {
+                    ugen: "flock.ugen.asr",
+                    start: 0.0,
+                    attack: 0.1,
+                    sutain: 0.1,
+                    release: 1.0
+                }
+            }
+        });
+
+        flock.enviro.shared.play();
+    </script>
+    <style>
+        html {
+              text-align: center;
+              }
+      .slider {
+
+            width: 80%;
+        }
+        button {
+            height: 50px;
+            background-color: silver;
+            margin: 0 auto;
+            display: table;
+        }
+        #synther{
+            position: fixed; 
+            top: 50%;
+            left: 50%;
+            width: 100px; 
+            height: 100px;
+            background-color: silver;
+            transform: translate(-25px,0);
+            -moz-border-radius: 50px;
+            -webkit-border-radius: 50px;
+            border-radius: 50px;
+        }
+        #noiser{
+            position: fixed; 
+            top: 50%;
+            left: 50%;
+            width: 100px; 
+            height: 100px;
+            background-color: silver;
+            transform: translate(-25px,0);
+            -webkit-clip-path: polygon(43% 41%, 64% 0, 46% 61%, 83% 61%, 96% 99%, 63% 73%, 18% 100%, 34% 63%, 18% 0, 32% 12%);
+            clip-path: polygon(43% 41%, 64% 0, 46% 61%, 83% 61%, 96% 99%, 63% 73%, 18% 100%, 34% 63%, 18% 0, 32% 12%);
+        }
+    </style>
+    <body>
+        <div id="synther"></div>
+        <div id="noiser"></div>
+
+        <button id="tone">TONE</button>
+        <br />
+        <form>
+              Low <input type="range" class="slider" id="tonepoints" min="200" max="1000"> High <br \>
+                <br />
+              Short <input type="range" class="slider" id="tonedur" min="200" max="2000"> Long <br \>
+       </form>
+
+        <button id="noise">NOISE</button>
+        <br />
+        <form>
+             <!--
+              Filter here? 
+              Low <input type="range" class="slider" id="noisecolour" min="200" max="1000"> High <br />
+            <br />
+             -->
+              Short <input type="range" class="slider" id="noisedur" min="200" max="2000"> Long <br />
+       </form>
+
+        <script>
+               $("#synther").hide();
+               $("#noiser").hide();
+
+            document.getElementById("tone").onclick = function(){
+               // animate
+               var dur = Number(document.getElementById("tonedur").value);
+               $("#synther").clearQueue();
+               $("#synther").css({left:"50%"});
+               $("#synther").fadeIn({ queue: false, duration: dur/2 , complete: function(){ 
+                       $("#synther").fadeOut({ queue: false, duration: dur/2 })  } 
+                });
+               $("#synther").animate({left:"10%"}, dur );
+
+               // trigger synth
+               var x = document.getElementById("tonepoints").value;
+               mySynth.set("jjj.freq", Number(x));
+               mySynth.set("jjj.mul.gate", 1);
+               mySynth.set("jjj.mul.release", dur/1000);
+               setTimeout(function(){mySynth.set("jjj.mul.gate",0)}, 100);
+            };
+
+            document.getElementById("noise").onclick = function(){
+               // animate
+               var dur = Number(document.getElementById("noisedur").value);
+               console.log(dur);
+               $("#noiser").clearQueue();
+               $("#noiser").css({left:"50%"});
+               $("#noiser").fadeIn({ queue: false, duration: dur/2 , complete: function(){ 
+                       $("#noiser").fadeOut({ queue: false, duration: dur/2 })  } 
+                });
+               $("#noiser").animate({left:"90%"}, dur );
+
+               var x = document.getElementById("tonepoints").value;
+               myNoise.set("nnn.mul.gate", 1);
+               myNoise.set("nnn.mul.release", dur/1000);
+               setTimeout(function(){myNoise.set("nnn.mul.gate",0)}, 100);
+            };
+
+        </script>
+    </body>
+</html>
