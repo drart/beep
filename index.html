@@ -31,7 +31,9 @@
             }
         });
 
-        flock.enviro.shared.play();
+        //flock.enviro.shared.play();
+        //mySynth.play();
+        //myNoise.play();
     </script>
     <style>
         html {
@@ -70,6 +72,21 @@
             -webkit-clip-path: polygon(43% 41%, 64% 0, 46% 61%, 83% 61%, 96% 99%, 63% 73%, 18% 100%, 34% 63%, 18% 0, 32% 12%);
             clip-path: polygon(43% 41%, 64% 0, 46% 61%, 83% 61%, 96% 99%, 63% 73%, 18% 100%, 34% 63%, 18% 0, 32% 12%);
         }
+        input[type='range'] {
+            -webkit-appearance: none;
+            background-color: silver;
+            outline: none;
+        }
+
+        input[type='range']::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            background-color: #444;
+            width: 20px;
+            height: 25px;
+            border: 0;
+            outline: 0;
+            outline-offset: -1px;
+        }
     </style>
     <body>
         <div id="synther"></div>
@@ -99,6 +116,10 @@
                $("#noiser").hide();
 
             document.getElementById("tone").onclick = function(){
+                if (!flock.enviro.shared.model.isPlaying) {
+                    flock.enviro.shared.play();
+                }
+            
                // animate
                var dur = Number(document.getElementById("tonedur").value);
                $("#synther").clearQueue();
@@ -117,6 +138,10 @@
             };
 
             document.getElementById("noise").onclick = function(){
+                if (!flock.enviro.shared.model.isPlaying) {
+                    flock.enviro.shared.play();
+                }
+
                // animate
                var dur = Number(document.getElementById("noisedur").value);
                console.log(dur);
